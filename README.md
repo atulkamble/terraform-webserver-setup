@@ -9,11 +9,14 @@ Tip: Your Terraform Configuration should be ready.
 
 1) Naviagte to EC2 
 2) Create keypair | Copy keypair to aws/aws_keys.keypair.pem
-3) create main.tf
-4) Configure vpc-id, subnet-id, AMI-id
-5) Configure kepair name.
-6) variables.tf | update keypair name
-7) 
+3) ```
+   chmod 400 keypair.pem
+   ```
+4) create main.tf
+5) Configure vpc-id, subnet-id, AMI-id
+6) Configure kepair name.
+7) variables.tf | update keypair name
+8) 
 ```
 terraform init
 terraform plan
