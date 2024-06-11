@@ -1,10 +1,14 @@
 terraform {
   required_providers {
     aws = {
-      source = "hashicorp/aws"
-      version = "5.41.0"
+      source  = "hashicorp/aws"
+      version = "5.53.0"
     }
   }
+}
+
+provider "aws" {
+  region = "ap-south-1"  # Replace with your desired region
 }
 
 
@@ -14,7 +18,7 @@ resource "aws_default_vpc" "default" {
 
 resource "aws_security_group" "http_server_sg" {
   name   = "http_server_sg"
-  vpc_id = "vpc-043f55ad3fae19eec"
+  vpc_id = "vpc-0e3d277c50a908dc7"
 
 
   ingress {
@@ -44,12 +48,12 @@ resource "aws_security_group" "http_server_sg" {
 }
 
 resource "aws_instance" "http_server" {
-  ami                    = "ami-0d7a109bf30624c99"
+  ami                    = "ami-0e1d06225679bc1c5"
   key_name               = "mywebserver"
   instance_type          = "t2.medium"
-  subnet_id              = "subnet-02377dee022db9bed"
+  subnet_id              = "subnet-0a1fc7a4af629e7f3"
   vpc_security_group_ids = [aws_security_group.http_server_sg.id]
-
+  associate_public_ip_address = true
 
   connection {
     type        = "ssh"
