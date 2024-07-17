@@ -41,7 +41,7 @@ cd .\aws_keys\
 8. update main.tf | Specify Region in Code | Update AWS Cloud Provider Setting | Configure vpc-id, subnet-id (ap-south-1a or ap-south-1b), AMI-id | Configure kepair name.
 9. update variables.tf | update keypair name
 10. Try following terraform commands
-    ```
+```
 terraform init
 terraform validate
 terraform fmt
