@@ -38,7 +38,7 @@ cd .\aws_keys\
    ```
    chmod 400 mywebserver.pem
    ```
-8. update main.tf | Specify Region in Code | Update AWS Cloud Provider Setting | Configure vpc-id, subnet-id (ap-south-1a or ap-south-1b), AMI-id | Configure kepair name.
+8. update main.tf | Specify Region in Code | Update AWS Cloud Provider Setting | Configure ``` vpc-id, subnet-id (ap-south-1a or ap-south-1b), AMI-id ``` | Configure kepair name.
 9. update variables.tf | update keypair name
 10. Try following terraform commands
 ```
