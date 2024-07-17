@@ -54,5 +54,8 @@ terrfaform destroy
 ```
 12. Upload your code to github repo 
 ```
+git add .
+git commit -m "code"
+git push origin main
 #git push https://token@github.com/username/terraform-webserver.git
 ```
