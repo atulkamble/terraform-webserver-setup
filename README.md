@@ -57,5 +57,5 @@ terrfaform destroy
 git add .
 git commit -m "code"
 git push origin main
-#git push https://token@github.com/username/terraform-webserver.git
+git push https://token@github.com/username/terraform-webserver.git
 ```
