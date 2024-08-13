@@ -41,8 +41,8 @@ git config --global user.email "email@gmail.com"
 
 Clone the repository containing the Terraform configurations:
 ```bash
-git clone https://github.com/atulkamble/terraform-webserver.git
-cd terraform-webserver
+git clone https://github.com/atulkamble/terraform-webserver-setup
+cd terraform-webserver-setup
 ```
 
 Alternatively, create the project files manually using PowerShell:
