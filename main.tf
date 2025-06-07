@@ -1,14 +1,14 @@
 terraform {
   required_providers {
     aws = {
-      source  = "hashicorp/aws"
-      version = "5.53.0"
+      source = "hashicorp/aws"
+      version = "6.0.0-beta3"
     }
   }
 }
 
 provider "aws" {
-  region = "ap-south-1"  # Replace with your desired region
+  region = "us-east-1"  # Replace with your desired region
 }
 
 
@@ -18,7 +18,7 @@ resource "aws_default_vpc" "default" {
 
 resource "aws_security_group" "http_server_sg" {
   name   = "http_server_sg"
-  vpc_id = "vpc-0e3d277c50a908dc7"
+  vpc_id = "vpc-09683ff71eaaac232"
 
 
   ingress {
@@ -48,10 +48,10 @@ resource "aws_security_group" "http_server_sg" {
 }
 
 resource "aws_instance" "http_server" {
-  ami                    = "ami-0e1d06225679bc1c5"
+  ami                    = "ami-02457590d33d576c3"
   key_name               = "mywebserver"
-  instance_type          = "t2.medium"
-  subnet_id              = "subnet-0a1fc7a4af629e7f3"
+  instance_type          = "t3.medium"
+  subnet_id              = "subnet-04fd00143070f5a16"
   vpc_security_group_ids = [aws_security_group.http_server_sg.id]
   associate_public_ip_address = true
 
