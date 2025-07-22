@@ -2,7 +2,7 @@ terraform {
   required_providers {
     aws = {
       source = "hashicorp/aws"
-      version = "6.0.0-beta3"
+      version = "6.4.0"
     }
   }
 }
@@ -48,10 +48,10 @@ resource "aws_security_group" "http_server_sg" {
 }
 
 resource "aws_instance" "http_server" {
-  ami                    = "ami-02457590d33d576c3"
+  ami                    = "ami-0cbbe2c6a1bb2ad63"
   key_name               = "mywebserver"
   instance_type          = "t3.medium"
-  subnet_id              = "subnet-04fd00143070f5a16"
+  subnet_id              = "subnet-0f135e475d49526d6"
   vpc_security_group_ids = [aws_security_group.http_server_sg.id]
   associate_public_ip_address = true
 
@@ -69,7 +69,7 @@ resource "aws_instance" "http_server" {
       "sudo systemctl start httpd",
       "sudo systemctl enable httpd",
       "sudo usermod -a -G apache ec2-user",
-      "sudo chmod 777 /var/www/html",
+      "sudo chmod 755 /var/www/html",
       "cd /var/www/html",
       "echo Welcome to Webserver ${self.public_dns} | sudo tee /var/www/html/index.html"
     ]
