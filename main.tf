@@ -11,17 +11,35 @@ provider "aws" {
   region = "us-east-1"
 }
 
-# Fetch Default VPC
 data "aws_vpc" "default" {
   default = true
 }
 
-# Fetch Default Subnet
 data "aws_subnets" "default" {
   filter {
     name   = "vpc-id"
     values = [data.aws_vpc.default.id]
   }
+}
+
+# Generate a random private key
+resource "tls_private_key" "ec2_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+# Create AWS Key Pair from generated public key
+resource "aws_key_pair" "generated_key" {
+  key_name   = "mywebserver"
+  public_key = tls_private_key.ec2_key.public_key_openssh
+}
+
+# Save the private key to a file (local)
+resource "local_file" "private_key_pem" {
+  content              = tls_private_key.ec2_key.private_key_pem
+  filename             = "${path.module}/aws/mywebserver.pem"
+  file_permission      = "0400"
+  directory_permission = "0700"
 }
 
 resource "aws_security_group" "http_server_sg" {
@@ -58,11 +76,11 @@ resource "aws_security_group" "http_server_sg" {
 }
 
 resource "aws_instance" "http_server" {
-  ami                    = "ami-0cbbe2c6a1bb2ad63"
-  instance_type          = "t3.medium"
-  key_name               = "mywebserver"
-  subnet_id              = data.aws_subnets.default.ids[0]
-  vpc_security_group_ids = [aws_security_group.http_server_sg.id]
+  ami                         = "ami-0cbbe2c6a1bb2ad63"
+  instance_type               = "t3.medium"
+  key_name                    = aws_key_pair.generated_key.key_name
+  subnet_id                   = data.aws_subnets.default.ids[0]
+  vpc_security_group_ids      = [aws_security_group.http_server_sg.id]
   associate_public_ip_address = true
 
   user_data = <<-EOF
@@ -79,4 +97,6 @@ resource "aws_instance" "http_server" {
   tags = {
     Name = "Terraform-HTTP-Server"
   }
+
+  depends_on = [local_file.private_key_pem]
 }

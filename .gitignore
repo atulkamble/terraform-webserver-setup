@@ -1,3 +1,4 @@
 *.pem
+aws/mywebserver.pem
 *.tfstate*
 .terraform/
