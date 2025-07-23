@@ -67,7 +67,105 @@ terraform destroy -auto-approve
 * Terraform >= 1.5.0
 * Bash shell (macOS/Linux)
 
+# 📝 Instructions
+
+```markdown
+# Instructions: Deploy EC2 Web Server with Terraform
+
+This guide walks you through deploying a basic Apache web server on AWS EC2 using Terraform.
+
+---
+
+## Prerequisites
+
+- AWS account with EC2 access
+- Terraform installed (`terraform -v`)
+- AWS credentials configured via `aws configure` or environment variables
+
+---
+
+## Steps
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/yourusername/terraform-webserver-setup.git
+cd terraform-webserver-setup
 ````
+
+---
+
+### 2. Make Script Executable
+
+```bash
+chmod +x deploy.sh
+```
+
+---
+
+### 3. Deploy Infrastructure
+
+```bash
+./deploy.sh
+```
+
+What this script does:
+
+* Removes any existing key file (`aws/mywebserver.pem`)
+* Initializes Terraform
+* Applies the infrastructure
+* Fetches the public IP
+* Opens the web page in your browser
+
+---
+
+### 4. Access Web Server
+
+Once deployed, visit:
+
+```
+http://<Public-IP>
+```
+
+You should see a message like:
+
+```
+Welcome to Webserver ip-172-31-xx-xx.ec2.internal
+```
+
+---
+
+### 5. SSH into Instance (Optional)
+
+```bash
+chmod 400 aws/mywebserver.pem
+ssh -i aws/mywebserver.pem ec2-user@<Public-IP>
+```
+
+---
+
+### 6. Destroy Infrastructure (Optional)
+
+```bash
+terraform destroy -auto-approve
+```
+
+---
+
+## Notes
+
+* The RSA key pair is generated dynamically during deployment.
+* The private key is saved to `aws/mywebserver.pem`
+* Apache is installed and enabled on boot.
+* The AMI used is Amazon Linux 2 (`ami-0cbbe2c6a1bb2ad63`) in `us-east-1`.
+
+---
+
+## Troubleshooting
+
+* **Permission denied (publickey)**: Make sure `.pem` file has `chmod 400` and is the correct key.
+* **Instance not accessible**: Ensure security group allows inbound SSH (22) and HTTP (80) traffic.
+* **Key file not found**: Ensure `aws/` directory exists or re-run `deploy.sh`.
 
 ---
 
