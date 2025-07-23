@@ -1,114 +1,148 @@
-# Launch and Configure Webserver using Terraform
+# 🚀 Launch and Configure Webserver Automatically using Terraform on AWS
 
-This project provides a detailed guide for launching, connecting to, and configuring a webserver on AWS using Terraform. The steps include configuring Terraform, managing AWS resources, and ensuring a successful deployment.
+This project uses **Terraform** to provision an **EC2-based Apache webserver** on **AWS**, fully automated using `user_data`. It dynamically fetches default VPC and subnet, provisions a security group, launches the EC2 instance, and bootstraps the webserver automatically — no SSH required.
 
-## Prerequisites
+---
 
-- Ensure Terraform is installed and configured.
-- Ensure AWS CLI is installed and configured with your access and secret keys using `aws configure`.
-- Ensure Git is installed.
+## ✅ Prerequisites
 
-## Steps
+- [Terraform](https://developer.hashicorp.com/terraform/install)
+- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) configured with `aws configure`
+- Git installed (`git --version`)
+- A valid AWS Key Pair named `mywebserver` downloaded locally
 
-### 1. Launch EC2 Instance
+---
 
-Begin by launching an EC2 instance through the AWS Management Console or using a predefined Terraform configuration.
+## 📁 Project Structure
 
-### 2. Connect to EC2 Instance
-
-Connect to your EC2 instance via SSH using the appropriate key pair.
-
-### 3. Install Terraform and Dependencies
-
-If Terraform is not already installed, follow the instructions to install it. Also, ensure that AWS CLI is set up and configured:
 ```bash
-# Install Terraform
-# Ensure AWS CLI is configured
-aws configure
-```
+terraform-webserver-setup/
+├── aws/
+│   └── mywebserver.pem         # Your private key (DO NOT COMMIT TO GIT)
+├── main.tf                     # Main Terraform configuration
+├── variables.tf                # Terraform variables
+├── instructions.md             # Manual instructions or notes
+├── README.md                   # This file
+└── .gitignore                  # Ignores sensitive and temp files
+````
 
-### 4. Install Git
+---
 
-Install Git on your instance:
+## 🚀 Steps to Deploy
+
+### 1️⃣ Clone the Repository
+
 ```bash
-sudo yum install git -y
-git --version
-git config --global user.name "username"
-git config --global user.email "email@gmail.com"
-```
-
-### 5. Clone the Repository
-
-Clone the repository containing the Terraform configurations:
-```bash
-git clone https://github.com/atulkamble/terraform-webserver-setup
+git clone https://github.com/atulkamble/terraform-webserver-setup.git
 cd terraform-webserver-setup
 ```
 
-Alternatively, create the project files manually using PowerShell:
-```powershell
-mkdir terraformproject
-cd .\terraformproject\
-New-Item main.tf
-New-Item variables.tf
-code .
-mkdir aws
-cd aws
-mkdir aws_keys
-cd .\aws_keys\
-```
+### 2️⃣ Add Your Key Pair
 
-### 6. Create Key Pair
+Download your AWS key pair (e.g. `mywebserver.pem`) from the AWS Console, and place it into:
 
-Create an AWS key pair named `mywebserver.pem` through the AWS Management Console. Save the key pair to the `aws/aws_keys/` directory:
 ```bash
-chmod 400 aws/aws_keys/mywebserver.pem
+aws/mywebserver.pem
+chmod 400 aws/mywebserver.pem
 ```
 
-### 7. Update Terraform Configuration
+### 3️⃣ Review the Terraform Files
 
-Update `main.tf` with the following:
-- Specify the AWS region.
-- Configure AWS provider settings.
-- Set the VPC ID, subnet ID, and AMI ID.
-- Configure the key pair name.
+* `main.tf` uses:
 
-Update `variables.tf` to include the key pair name.
+  * Dynamic VPC & Subnet fetching
+  * EC2 provisioning with `user_data` for Apache install
+  * No SSH required
+* `variables.tf` points to your private key location (used only for provisioning if needed)
 
-### 8. Initialize and Apply Terraform Configuration
+### 4️⃣ Initialize and Apply Terraform
 
-Run the following Terraform commands to initialize, validate, format, plan, and apply the configuration:
 ```bash
 terraform init
 terraform validate
 terraform fmt
-terraform plan
-terraform apply
+terraform apply -auto-approve
 ```
 
-### 9. Verify Deployment
+Terraform will:
 
-Once Terraform has successfully applied the configuration, retrieve the public IP address of the instance and verify the webserver by accessing it via a browser.
+* Create a security group with HTTP + SSH open
+* Launch a t3.medium EC2 instance using the provided AMI
+* Automatically install and start Apache via `user_data`
+* Print public IP once done
 
-### 10. Clean Up
+---
 
-If you need to destroy the resources created by Terraform:
+## 🌐 Access the Webserver
+
+Once `terraform apply` completes, access the Apache server in your browser using:
+
+```
+http://<public-ip>
+```
+
+You should see:
+
+```
+Welcome to Webserver <hostname>
+```
+
+---
+
+## 🧹 Cleanup Resources
+
+To destroy all created infrastructure:
+
 ```bash
-terraform destroy
+terraform destroy -auto-approve
 ```
 
-### 11. Commit and Push Code
+---
 
-Commit your changes and push them to the GitHub repository:
+## 💻 Optional: Deploy via Script
+
+Use the provided helper script to automate:
+
 ```bash
-git add .
-git commit -m "Initial commit"
-git push origin main
-```
-For private repositories, use your GitHub token:
-```bash
-git push https://token@github.com/username/terraform-webserver.git
+chmod +x deploy.sh
+./deploy.sh
 ```
 
-By following these steps, you will successfully deploy and manage a webserver on AWS using Terraform.
+Add this file (`deploy.sh`):
+
+```bash
+#!/bin/bash
+chmod 400 aws/mywebserver.pem
+terraform init
+terraform apply -auto-approve
+```
+
+---
+
+## 🚫 Important: Git Ignore
+
+Ensure `.pem` files and Terraform state files are not committed. Add a `.gitignore` file:
+
+```gitignore
+*.pem
+*.tfstate*
+.terraform/
+```
+
+---
+
+## ✅ Final Notes
+
+* This setup avoids SSH provisioning for faster, fully-automated deployments.
+* Ideal for demos, learning, or base automation pipelines.
+* Customize tags, AMI, and `user_data` to match your use case.
+
+---
+
+📬 **Need CI/CD or GitHub Actions Integration?**
+Ask for a ready-made `.github/workflows/terraform.yml` file for full GitHub automation!
+
+```
+
+---
 
