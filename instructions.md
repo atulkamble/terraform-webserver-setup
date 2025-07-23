@@ -1,4 +1,3 @@
-````markdown
 # 🛠️ Instructions: Launch a Web Server using Terraform on AWS
 
 This guide walks you through setting up a fully automated Apache webserver on an EC2 instance using Terraform and AWS CLI.
