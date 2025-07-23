@@ -1,97 +1,161 @@
-# 🚀 Launch and Configure Webserver Automatically using Terraform on AWS
-
-This project uses **Terraform** to provision an **EC2-based Apache webserver** on **AWS**, fully automated using `user_data`. It dynamically fetches default VPC and subnet, provisions a security group, launches the EC2 instance, and bootstraps the webserver automatically — no SSH required.
+Here are the contents for the `README.md` and `instructions.md` files for your `terraform-webserver-setup` project.
 
 ---
 
-## ✅ Prerequisites
+### ✅ `README.md`
 
-- [Terraform](https://developer.hashicorp.com/terraform/install)
-- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) configured with `aws configure`
-- Git installed (`git --version`)
-- A valid AWS Key Pair named `mywebserver` downloaded locally
+````markdown
+# Terraform Web Server Setup (AWS EC2)
 
----
+This project uses **Terraform** to provision an **Apache HTTP web server** on an **AWS EC2 instance** inside the default VPC. It also generates a secure SSH key pair, configures security groups, and automatically installs and starts Apache on the EC2 instance.
+
+## 🛠 Features
+
+- Deploys EC2 instance in AWS (Amazon Linux 2)
+- Installs and starts Apache HTTPD server
+- Generates and saves RSA private key securely
+- Opens port **80 (HTTP)** and **22 (SSH)** via Security Group
+- Automatically fetches the public IP of the instance
+- Lightweight deployment using `t3.medium` instance
+- Cross-platform `deploy.sh` automation script
 
 ## 📁 Project Structure
 
 ```bash
-terraform-webserver-setup/
-├── aws/
-│   └── mywebserver.pem         # Your private key (DO NOT COMMIT TO GIT)
-├── main.tf                     # Main Terraform configuration
-├── variables.tf                # Terraform variables
-├── instructions.md             # Manual instructions or notes
-├── README.md                   # This file
-└── .gitignore                  # Ignores sensitive and temp files
+.
+├── aws                     # Directory to store private key
+├── deploy.sh               # Shell script to deploy infrastructure
+├── instructions.md         # Step-by-step usage instructions
+├── main.tf                 # Terraform config for AWS EC2 setup
+├── outputs.tf              # Outputs the EC2 instance's public IP
+├── README.md               # Project overview and usage
+├── terraform.tfstate       # Terraform state file (auto-generated)
+└── terraform.tfstate.backup
+````
+
+## 🚀 Quick Start
+
+```bash
+# 1. Clone this repo
+git clone https://github.com/yourusername/terraform-webserver-setup.git
+cd terraform-webserver-setup
+
+# 2. Run the deployment script
+chmod +x deploy.sh
+./deploy.sh
+```
+
+## 🌍 Access Web Server
+
+After deployment, the script will output and (on supported OS) open the web server in your default browser:
+
+```
+http://<Public-IP>
+```
+
+## 🔐 SSH Access
+
+```bash
+chmod 400 aws/mywebserver.pem
+ssh -i aws/mywebserver.pem ec2-user@<Public-IP>
+```
+
+## 🧹 Destroy Infrastructure
+
+To destroy the created infrastructure:
+
+```bash
+terraform destroy -auto-approve
+```
+
+## 📌 Requirements
+
+* AWS CLI configured with access to create EC2 resources
+* Terraform >= 1.5.0
+* Bash shell (macOS/Linux)
+
 ````
 
 ---
 
-## 🚀 Steps to Deploy
+### 📝 `instructions.md`
 
-### 1️⃣ Clone the Repository
+```markdown
+# Instructions: Deploy EC2 Web Server with Terraform
+
+This guide walks you through deploying a basic Apache web server on AWS EC2 using Terraform.
+
+---
+
+## Prerequisites
+
+- AWS account with EC2 access
+- Terraform installed (`terraform -v`)
+- AWS credentials configured via `aws configure` or environment variables
+
+---
+
+## Steps
+
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/atulkamble/terraform-webserver-setup.git
+git clone https://github.com/yourusername/terraform-webserver-setup.git
 cd terraform-webserver-setup
-```
+````
 
-### 2️⃣ Add Your Key Pair
+---
 
-Download your AWS key pair (e.g. `mywebserver.pem`) from the AWS Console, and place it into:
+### 2. Make Script Executable
 
 ```bash
-aws/mywebserver.pem
+chmod +x deploy.sh
+```
+
+---
+
+### 3. Deploy Infrastructure
+
+```bash
+./deploy.sh
+```
+
+What this script does:
+
+* Removes any existing key file (`aws/mywebserver.pem`)
+* Initializes Terraform
+* Applies the infrastructure
+* Fetches the public IP
+* Opens the web page in your browser
+
+---
+
+### 4. Access Web Server
+
+Once deployed, visit:
+
+```
+http://<Public-IP>
+```
+
+You should see a message like:
+
+```
+Welcome to Webserver ip-172-31-xx-xx.ec2.internal
+```
+
+---
+
+### 5. SSH into Instance (Optional)
+
+```bash
 chmod 400 aws/mywebserver.pem
-```
-
-### 3️⃣ Review the Terraform Files
-
-* `main.tf` uses:
-
-  * Dynamic VPC & Subnet fetching
-  * EC2 provisioning with `user_data` for Apache install
-  * No SSH required
-* `variables.tf` points to your private key location (used only for provisioning if needed)
-
-### 4️⃣ Initialize and Apply Terraform
-
-```bash
-terraform init
-terraform validate
-terraform fmt
-terraform apply -auto-approve
-```
-
-Terraform will:
-
-* Create a security group with HTTP + SSH open
-* Launch a t3.medium EC2 instance using the provided AMI
-* Automatically install and start Apache via `user_data`
-* Print public IP once done
-
----
-
-## 🌐 Access the Webserver
-
-Once `terraform apply` completes, access the Apache server in your browser using:
-
-```
-http://<public-ip>
-```
-
-You should see:
-
-```
-Welcome to Webserver <hostname>
+ssh -i aws/mywebserver.pem ec2-user@<Public-IP>
 ```
 
 ---
 
-## 🧹 Cleanup Resources
-
-To destroy all created infrastructure:
+### 6. Destroy Infrastructure (Optional)
 
 ```bash
 terraform destroy -auto-approve
@@ -99,50 +163,25 @@ terraform destroy -auto-approve
 
 ---
 
-## 💻 Optional: Deploy via Script
+## Notes
 
-Use the provided helper script to automate:
-
-```bash
-chmod +x deploy.sh
-./deploy.sh
-```
-
-Add this file (`deploy.sh`):
-
-```bash
-#!/bin/bash
-chmod 400 aws/mywebserver.pem
-terraform init
-terraform apply -auto-approve
-```
+* The RSA key pair is generated dynamically during deployment.
+* The private key is saved to `aws/mywebserver.pem`
+* Apache is installed and enabled on boot.
+* The AMI used is Amazon Linux 2 (`ami-0cbbe2c6a1bb2ad63`) in `us-east-1`.
 
 ---
 
-## 🚫 Important: Git Ignore
+## Troubleshooting
 
-Ensure `.pem` files and Terraform state files are not committed. Add a `.gitignore` file:
-
-```gitignore
-*.pem
-*.tfstate*
-.terraform/
-```
+* **Permission denied (publickey)**: Make sure `.pem` file has `chmod 400` and is the correct key.
+* **Instance not accessible**: Ensure security group allows inbound SSH (22) and HTTP (80) traffic.
+* **Key file not found**: Ensure `aws/` directory exists or re-run `deploy.sh`.
 
 ---
-
-## ✅ Final Notes
-
-* This setup avoids SSH provisioning for faster, fully-automated deployments.
-* Ideal for demos, learning, or base automation pipelines.
-* Customize tags, AMI, and `user_data` to match your use case.
-
----
-
-📬 **Need CI/CD or GitHub Actions Integration?**
-Ask for a ready-made `.github/workflows/terraform.yml` file for full GitHub automation!
 
 ```
 
----
-
+Let me know if you want to include remote backend, module structure, or monitoring integrations like CloudWatch or Prometheus later.
+```
+01~
