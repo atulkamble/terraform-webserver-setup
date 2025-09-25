@@ -30,7 +30,7 @@ resource "tls_private_key" "ec2_key" {
 
 # Create AWS Key Pair from generated public key
 resource "aws_key_pair" "generated_key" {
-  key_name   = "mywebserver"
+  key_name   = "server"
   public_key = tls_private_key.ec2_key.public_key_openssh
 }
 
