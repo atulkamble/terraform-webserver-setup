@@ -106,7 +106,7 @@ resource "aws_instance" "http_server" {
               EOF
 
   tags = {
-    Name = "Terraform-WebServer"
+    Name = "webserver"
   }
 
   depends_on = [local_file.private_key_pem]
