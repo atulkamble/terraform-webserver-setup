@@ -2,7 +2,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "6.4.0"
+      version = "6.14.1"
     }
   }
 }
@@ -37,7 +37,7 @@ resource "aws_key_pair" "generated_key" {
 # Save the private key to a file (local)
 resource "local_file" "private_key_pem" {
   content              = tls_private_key.ec2_key.private_key_pem
-  filename             = "${path.module}/aws/mywebserver.pem"
+  filename             = "${path.module}/aws/server.pem"
   file_permission      = "0400"
   directory_permission = "0700"
 }
@@ -46,6 +46,15 @@ resource "aws_security_group" "http_server_sg" {
   name        = "http_server_sg"
   description = "Allow HTTP and SSH"
   vpc_id      = data.aws_vpc.default.id
+
+ ingress {
+    description = "SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
 
   ingress {
     description = "HTTP"
@@ -63,13 +72,7 @@ resource "aws_security_group" "http_server_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
- ingress {
-    description = "SSH"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+
 
   egress {
     from_port   = 0
@@ -84,7 +87,7 @@ resource "aws_security_group" "http_server_sg" {
 }
 
 resource "aws_instance" "http_server" {
-  ami                         = "ami-0cbbe2c6a1bb2ad63"
+  ami                         = "ami-08982f1c5bf93d976"
   instance_type               = "t3.medium"
   key_name                    = aws_key_pair.generated_key.key_name
   subnet_id                   = data.aws_subnets.default.ids[0]
@@ -103,7 +106,7 @@ resource "aws_instance" "http_server" {
               EOF
 
   tags = {
-    Name = "Terraform-HTTP-Server"
+    Name = "Terraform-WebServer"
   }
 
   depends_on = [local_file.private_key_pem]

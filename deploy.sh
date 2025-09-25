@@ -3,7 +3,7 @@
 echo "⚙️  Starting Terraform Webserver Deployment..."
 
 # Step 1: Cleanup old key if exists
-KEY_PATH="aws/mywebserver.pem"
+KEY_PATH="aws/server.pem"
 
 if [ -f "$KEY_PATH" ]; then
   echo "🔁 Removing old private key..."
