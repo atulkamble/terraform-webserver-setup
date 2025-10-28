@@ -2,7 +2,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "6.14.1"
+      version = "6.18.0"
     }
   }
 }
@@ -87,7 +87,7 @@ resource "aws_security_group" "http_server_sg" {
 }
 
 resource "aws_instance" "http_server" {
-  ami                         = "ami-08982f1c5bf93d976"
+  ami                         = "ami-07860a2d7eb515d9a"
   instance_type               = "t3.medium"
   key_name                    = aws_key_pair.generated_key.key_name
   subnet_id                   = data.aws_subnets.default.ids[0]
@@ -100,7 +100,7 @@ resource "aws_instance" "http_server" {
               yum install httpd -y
               systemctl start httpd
               systemctl enable httpd
-              usermod -a -G apache ec2-user
+              usermod -aG apache ec2-user
               chmod 755 /var/www/html
               echo "Welcome to Webserver $(hostname -f)" > /var/www/html/index.html
               EOF
