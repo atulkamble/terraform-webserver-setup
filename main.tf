@@ -47,7 +47,7 @@ resource "aws_security_group" "http_server_sg" {
   description = "Allow HTTP and SSH"
   vpc_id      = data.aws_vpc.default.id
 
- ingress {
+  ingress {
     description = "SSH"
     from_port   = 22
     to_port     = 22
