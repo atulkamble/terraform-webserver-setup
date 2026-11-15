@@ -102,7 +102,9 @@ resource "aws_instance" "http_server" {
               systemctl enable httpd
               usermod -aG apache $USER
               chmod 755 /var/www/html
-              echo "Welcome to Webserver $(hostname -f)" > /var/www/html/index.html
+              cat > /var/www/html/index.html <<'HTML'
+              ${file("${path.module}/index.html")}
+              HTML
               EOF
 
   tags = {
