@@ -87,7 +87,7 @@ resource "aws_security_group" "http_server_sg" {
 }
 
 resource "aws_instance" "http_server" {
-  ami                         = "ami-0332d564d76dbd8d6"
+  ami                         = "ami-096ef200a877f36af "
   instance_type               = "t3.medium"
   key_name                    = aws_key_pair.generated_key.key_name
   subnet_id                   = data.aws_subnets.default.ids[0]
@@ -100,7 +100,7 @@ resource "aws_instance" "http_server" {
               yum install httpd -y
               systemctl start httpd
               systemctl enable httpd
-              usermod -aG apache ec2-user
+              usermod -aG apache $USER
               chmod 755 /var/www/html
               echo "Welcome to Webserver $(hostname -f)" > /var/www/html/index.html
               EOF
