@@ -87,7 +87,7 @@ resource "aws_security_group" "http_server_sg" {
 }
 
 resource "aws_instance" "http_server" {
-  ami                         = "ami-096ef200a877f36af "
+  ami                         = "ami-096ef200a877f36af"
   instance_type               = "t3.medium"
   key_name                    = aws_key_pair.generated_key.key_name
   subnet_id                   = data.aws_subnets.default.ids[0]
